@@ -1,0 +1,11 @@
+bin/
+obj/
+.DS_Store
+.vs
+**/PuzzleHelper/Cookie.txt
+*.csproj.user
+
+# Ignore user generated inputs so that the site is harder to reverse engineer
+# This follows the pattern set by advent of code:
+# https://www.reddit.com/r/adventofcode/wiki/faqs/copyright/inputs/
+Inputs/* 

@@ -1,0 +1,168 @@
+using HtmlAgilityPack;
+
+namespace I18NPuzzles.Gateways
+{
+    public class I18NPuzzlesGateway
+    {
+        private HttpClient? client;
+        private readonly int throttleInMinutes = 3;
+        private DateTimeOffset? lastCall = null;
+
+        /// <summary>
+        /// For a given year and day, get the user's puzzle input
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="day"></param>
+        /// <returns></returns>
+        public async Task<string> ImportInput(int year, int day)
+        {
+            ThrottleCall();
+
+            // TODO, get the proper route for downloading inputs once a puzzle has come out
+            HttpRequestMessage message = new(HttpMethod.Get, $"/{year}/day/{day}/input");
+
+            if (client == null)
+            {
+                try
+                {
+                    InitializeClient();
+                }
+                catch
+                {
+                    throw new Exception("Unable to read Cookie.txt. Make sure that it exists in the PuzzleHelper folder. See the ReadMe for more.");
+                }
+            }
+
+            HttpResponseMessage result = await client!.SendAsync(message);
+            string response = await GetSuccessfulResponseContent(result);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Send the user's answer to the specific question
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="day"></param>
+        /// <param name="answer"></param>
+        /// <returns></returns>
+        public async Task<string> SubmitAnswer(int year, int day, string answer)
+        {
+            ThrottleCall();
+
+            Dictionary<string, string> data = new()
+            {
+                { "answer", answer }
+            };
+
+            HttpContent request = new FormUrlEncodedContent(data);
+
+            if (client == null)
+            {
+                try
+                {
+                    InitializeClient();
+                }
+                catch
+                {
+                    return "Unable to read Cookie.txt. Make sure that it exists in the PuzzleHelper folder. See the ReadMe for more.";
+                }
+            }
+
+            // TODO, get the proper route for answering solutions once a puzzle has come out
+            HttpResponseMessage result = await client!.PostAsync($"/{year}/day/{day}/answer", request);
+
+            string response = await GetSuccessfulResponseContent(result);
+
+            // TODO, properly detect an expired cookie once a puzzle has come out
+            if (response.Contains("please identify yourself"))
+            {
+                // We tried to submit an answer, but our token has expired
+                response = "Your cookie has expired, view the ReadMe for instructions on how to update it.";
+            }
+            else
+            {
+                try
+                {
+                    // TODO, properly parse the response once a puzzle has come out to test against
+                    // Find article component
+                    HtmlDocument doc = new();
+                    doc.LoadHtml(response);
+                    HtmlNode article = doc.DocumentNode.SelectSingleNode("//article/p");
+                    response = article.InnerHtml;
+                }
+                catch (Exception)
+                {
+                    System.Console.WriteLine("Error parsing html response.");
+                }
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Ensure that the response was successful and return the parsed response if it was
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        private static async Task<string> GetSuccessfulResponseContent(HttpResponseMessage result)
+        {
+            result.EnsureSuccessStatusCode();
+            return await result.Content.ReadAsStringAsync();
+        }
+
+        /// <summary>
+        /// Tracks the last API call and prevents another call from being made until after the configured limit
+        /// </summary>
+        private void ThrottleCall()
+        {
+            if (lastCall != null && DateTimeOffset.Now < lastCall.Value.AddMinutes(throttleInMinutes))
+            {
+                throw new Exception($"Unable to make another API call to I18N Puzzles Server because we are attempting to throttle calls according to their specifications (See more in the ReadMe). Please try again after {lastCall.Value.AddMinutes(throttleInMinutes)}.");
+            }
+            else
+            {
+                lastCall = DateTimeOffset.Now;
+            }
+        }
+
+        /// <summary>
+        /// Initialize the Http Client using the user's cookie
+        /// </summary>
+        private void InitializeClient()
+        {
+            // We're waiting to do this until the last moment in case someone want's to use the code base without setting up the cookie
+            client = new HttpClient
+            {
+                BaseAddress = new Uri("https://i18n-puzzles.com/")
+            };
+
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(".NET 8.0 (+via https://github.com/austin-owensby/I18NPuzzles by austin_owensby@hotmail.com)");
+
+            string[] fileData;
+
+            try
+            {
+                string directoryPath = Directory.GetParent(Environment.CurrentDirectory)!.FullName;
+                string filePath = Path.Combine(directoryPath, "Shared", "PuzzleHelper", "Cookie.txt");
+                fileData = File.ReadAllLines(filePath);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Unable to read Cookie.txt. Make sure that it exists in the PuzzleHelper folder. See the ReadMe for more.");
+            }
+
+            if (fileData.Length == 0 || string.IsNullOrWhiteSpace(fileData[0]))
+            {
+                throw new Exception("Cookie.txt is empty. Please ensure it is properly populated and saved. See the ReadMe for more.");
+            }
+            if (fileData.Length > 1)
+            {
+                throw new Exception("Detected multiple lines in Cookie.txt, ensure that the whole cookie is on 1 line.");
+            }
+
+            string cookie = fileData[0];
+            client.DefaultRequestHeaders.Add("Cookie", cookie);
+        }
+    }
+}

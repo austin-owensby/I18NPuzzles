@@ -1,0 +1,58 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch (web)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_web",
+            "program": "${workspaceFolder}/WebAPI/bin/Debug/net8.0/WebAPI.dll",
+            "cwd": "${workspaceFolder}/WebAPI",
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "logging": {
+                "moduleLoad": false
+            },
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Launch (web - no browser)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_web",
+            "program": "${workspaceFolder}/WebAPI/bin/Debug/net8.0/WebAPI.dll",
+            "cwd": "${workspaceFolder}/WebAPI",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "logging": {
+                "moduleLoad": false
+            },
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_console",
+            "program": "${workspaceFolder}/Console/bin/Debug/net8.0/Console.dll",
+            "cwd": "${workspaceFolder}/Console",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "logging": {
+                "moduleLoad": false
+            },
+            "console": "integratedTerminal"
+        },
+    ]
+}
