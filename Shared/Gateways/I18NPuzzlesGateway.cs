@@ -1,5 +1,6 @@
 using System.Net;
 using HtmlAgilityPack;
+using I18NPuzzles.Services;
 
 namespace I18NPuzzles.Gateways
 {
@@ -75,8 +76,15 @@ namespace I18NPuzzles.Gateways
         {
             ThrottleCall();
 
+            string? token = await GetCSRFMiddlewareToken(day);
+
+            if (token == null) {
+                throw new Exception("Puzzle has already been solved or we couldn't find the token.");
+            }
+
             Dictionary<string, string> data = new()
             {
+                { "csrfmiddlewaretoken", token },
                 { "answer", answer }
             };
 
@@ -94,18 +102,17 @@ namespace I18NPuzzles.Gateways
                 }
             }
 
-            // TODO, get the proper route for answering solutions once a puzzle has come out
-            HttpResponseMessage result = await client!.PostAsync($"/puzzle/{day}/answer", request);
+            HttpResponseMessage result = await client!.PostAsync($"/puzzle/{day}/submit", request);
 
+            // TODO validate behavior of a successful answer
             string response = await GetSuccessfulResponseContent(result);
 
             try
             {
-                // TODO, properly parse the response once a puzzle has come out to test against
-                // Find article component
+                // Display the response
                 HtmlDocument doc = new();
                 doc.LoadHtml(response);
-                HtmlNode article = doc.DocumentNode.SelectSingleNode("//article/p");
+                HtmlNode article = doc.DocumentNode.SelectSingleNode("//p");
                 response = article.InnerHtml;
             }
             catch (Exception)
@@ -114,6 +121,28 @@ namespace I18NPuzzles.Gateways
             }
 
             return response;
+        }
+
+        private async Task<string?> GetCSRFMiddlewareToken(int day) {
+            if (client == null)
+            {
+                try
+                {
+                    InitializeClient();
+                }
+                catch
+                {
+                    return "Unable to read Cookie.txt. Make sure that it exists in the PuzzleHelper folder. See the ReadMe for more.";
+                }
+            }
+
+            HttpResponseMessage result = await client!.GetAsync($"/puzzle/{day}/");
+
+            string response = await GetSuccessfulResponseContent(result);
+
+            string? token = Utility.QuickRegex(response, "<form.+puzzle\\/\\d+\\/submit.+\\s+.+csrfmiddlewaretoken.+value.+\"(.+)\"").FirstOrDefault();
+
+            return token;
         }
 
         /// <summary>
