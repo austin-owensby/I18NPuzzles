@@ -72,4 +72,9 @@ The program is idempotent (You can run this multiple times as it will only add a
 
 ## Extra Notes
 - The admin of I18N Puzzles has said that using this code for automation is OK:
-> provided the automation is for personal use and you don't do more than a handful requests per day. ... I reserve the right to limit or block users that aren't treating the site gently.
+> provided the automation is for personal use and you don't do more than a handful requests per day.
+
+> I reserve the right to limit or block users that aren't treating the site gently.
+
+- Unlike Advent of Code, the admin is fine with checking in inputs
+> I'm less strict about this. I think copying inputs is OK, as long as you attribute the origin somewhere in your repo.
