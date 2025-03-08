@@ -13,7 +13,7 @@ namespace I18NPuzzles.Console.Controllers
         /// </summary>
         /// <param name="day"></param>
         /// <param name="send">Submit the result to I18N Puzzles</param>
-        /// <param name="example">Use an example file instead of the regular input, you must add the example at `Inputs/YYYY/DD_example.txt`</param>
+        /// <param name="example">Use an example file instead of the regular input, you must add the example at `Inputs/DD_example.txt`</param>
         public async Task GetSolution(int day = 1, bool send = false, bool example = false) {
             if (send && example)
             {

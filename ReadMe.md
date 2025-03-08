@@ -56,7 +56,7 @@ Specifically:
 - Query parameters
    - day (Ex. 14) (Defaults to 1)
    - send (Ex. true) (Defaults to false) Submit the result to I18N Puzzles
-   - example (Ex. true) (Defaults to false) Use an example file instead of the regular input, you must add the example at `Inputs/<YYYY>/<DD>_example.txt`
+   - example (Ex. true) (Defaults to false) Use an example file instead of the regular input, you must add the example at `Inputs/<DD>_example.txt`
 - Ex. `GET api/run-solution?day=14&&send=true`
 
 Runs a specific day's solution, and optionally posts the answer to I18N Puzzles and returns the result.
@@ -66,7 +66,7 @@ Runs a specific day's solution, and optionally posts the answer to I18N Puzzles 
    - day (Ex. 14) (Defaults to 1)
 - Ex. `POST api/import-input-file?day=14`
 
-Imports the input from I18N Puzzles for a specific day.
+Imports the input and example from I18N Puzzles for a specific day.
 
 The program is idempotent (You can run this multiple times as it will only add a file if it is needed.)
 
