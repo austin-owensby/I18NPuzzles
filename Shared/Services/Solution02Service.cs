@@ -7,15 +7,12 @@ namespace I18NPuzzles.Services
         public string RunSolution(bool example)
         {
             List<string> lines = Utility.GetInputLines(2, example);
+            List<DateTimeOffset> dates = lines.Select(DateTimeOffset.Parse).ToList();
+            DateTime detectedWaveTime = dates.GroupBy(l => l.UtcDateTime).OrderByDescending(g => g.Count()).First().Key;
 
-            int answer = 0;
+            string answer = detectedWaveTime.ToString("MM-ddTHH:mm:sszzz");
 
-            foreach (string line in lines)
-            {
-
-            }
-
-            return answer.ToString();
+            return answer;
         }
     }
 }
