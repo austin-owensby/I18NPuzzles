@@ -104,7 +104,6 @@ namespace I18NPuzzles.Gateways
 
             HttpResponseMessage result = await client!.PostAsync($"/puzzle/{day}/submit", request);
 
-            // TODO validate behavior of a successful answer
             string response = await GetSuccessfulResponseContent(result);
 
             try
@@ -112,7 +111,7 @@ namespace I18NPuzzles.Gateways
                 // Display the response
                 HtmlDocument doc = new();
                 doc.LoadHtml(response);
-                HtmlNode article = doc.DocumentNode.SelectSingleNode("//p");
+                HtmlNode article = doc.DocumentNode.SelectSingleNode("//b");
                 response = article.InnerHtml;
             }
             catch (Exception)
