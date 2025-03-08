@@ -10,7 +10,7 @@ namespace I18NPuzzles.Services
             List<DateTimeOffset> dates = lines.Select(DateTimeOffset.Parse).ToList();
             DateTime detectedWaveTime = dates.GroupBy(l => l.UtcDateTime).OrderByDescending(g => g.Count()).First().Key;
 
-            string answer = detectedWaveTime.ToString("MM-ddTHH:mm:sszzz");
+            string answer = detectedWaveTime.ToString("yyyy-MM-ddTHH:mm:sszzz");
 
             return answer;
         }
