@@ -34,7 +34,7 @@ You may also reference the `aowensby-solutions` branch which contains my own sol
 ## Puzzle Helper
 This allows you to easily create the needed services as well as submitting answers.
 
-In the `Shared/PuzzleHelper` folder, create a `Cookie.txt` file and add your own cookie that gets created when logging into the I18N Puzzles website. While on the I18N Puzzles website, if you open the Network tab in your browser's Dev Tools, you'll see the cookie in the header of API calls that are made while navigating the site. This typically expires after a month so you'll need to update it each year.
+In the `Shared/PuzzleHelper` folder, create a `Cookie.txt` file and add your own cookie that gets created when logging into the I18N Puzzles website. While on the I18N Puzzles website, if you open the Network tab in your browser's Dev Tools, you'll see the cookie in the header of API calls that are made while navigating the site.
 
 Ensure that the Cookie.txt is all 1 line.
 
@@ -46,7 +46,7 @@ The Puzzle Helper does follow the automation guidelines on the [/r/adventofcode 
 
 Specifically:
 * Outbound calls are throttled to every 3 minutes in the I18NPuzzlesGateway's `ThrottleCall()` function
-* Once inputs are downloaded, they are cached locally (PuzzleHelper's `WriteInputFile(int year, int day)` function) through the `api/import-input-file` endpoint described below.
+* Once inputs are downloaded, they are cached locally (PuzzleHelper's `WriteInputFile(int day)` function) through the `api/import-input-file` endpoint described below.
 * If you suspect your input is corrupted, you can get a fresh copy by deleting the old file and re-running the `api/import-input-file` endpoint.
 * The User-Agent header in the Program.cs's gateway configuration is set to me since I maintain this tool :)
 
@@ -54,32 +54,21 @@ Specifically:
 
 ### GET `api/run-solution`
 - Query parameters
-   - year (Ex. 2025) (Defaults to 2025)
    - day (Ex. 14) (Defaults to 1)
    - send (Ex. true) (Defaults to false) Submit the result to I18N Puzzles
    - example (Ex. true) (Defaults to false) Use an example file instead of the regular input, you must add the example at `Inputs/<YYYY>/<DD>_example.txt`
-- Ex. `GET api/run-solution?year=2025&day=14&&send=true`
+- Ex. `GET api/run-solution?day=14&&send=true`
 
 Runs a specific day's solution, and optionally posts the answer to I18N Puzzles and returns the result.
 
 ### POST `api/import-input-file`
 - Query parameters
-   - year (Ex. 2025) (Defaults to 2025)
    - day (Ex. 14) (Defaults to 1)
-- Ex. `POST api/import-input-file?year=2025&day=14`
+- Ex. `POST api/import-input-file?day=14`
 
 Imports the input from I18N Puzzles for a specific day.
 
 The program is idempotent (You can run this multiple times as it will only add a file if it is needed.)
-
-### POST `api/generate-service-files`
-
-Creates missing daily solution service files.
-Useful when a new year has started to preemptively generate the service files for the calendar year before the advent starts.
-
-You'll likely only need to use this once per year and only if either your source code has gotten out of sync from the `main` branch or I haven't kept it up to date.
-
-The program is idempotent (You can run this multiple times as it will only add files if they are needed.)
 
 ## Extra Notes
 - The admin of I18N Puzzles has said that using this code for automation is OK:

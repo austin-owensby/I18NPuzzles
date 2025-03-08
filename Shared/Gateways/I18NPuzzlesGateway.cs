@@ -1,3 +1,4 @@
+using System.Net;
 using HtmlAgilityPack;
 
 namespace I18NPuzzles.Gateways
@@ -9,17 +10,42 @@ namespace I18NPuzzles.Gateways
         private DateTimeOffset? lastCall = null;
 
         /// <summary>
-        /// For a given year and day, get the user's puzzle input
+        /// For a given day, get the user's puzzle input
         /// </summary>
-        /// <param name="year"></param>
         /// <param name="day"></param>
         /// <returns></returns>
-        public async Task<string> ImportInput(int year, int day)
+        public async Task<string> ImportInput(int day)
         {
             ThrottleCall();
 
-            // TODO, get the proper route for downloading inputs once a puzzle has come out
-            HttpRequestMessage message = new(HttpMethod.Get, $"/{year}/day/{day}/input");
+            HttpRequestMessage message = new(HttpMethod.Get, $"/puzzle/{day}/input");
+
+            if (client == null)
+            {
+                try
+                {
+                    InitializeClient();
+                }
+                catch
+                {
+                    throw new Exception("Unable to read Cookie.txt. Make sure that it exists in the PuzzleHelper folder. See the ReadMe for more.");
+                }
+            }
+
+            HttpResponseMessage result = await client!.SendAsync(message);
+            string response = await GetSuccessfulResponseContent(result);
+
+            return response;
+        }
+
+        /// <summary>
+        /// For a given day, get the user's puzzle test input
+        /// </summary>
+        /// <param name="day"></param>
+        /// <returns></returns>
+        public async Task<string> ImportInputExample(int day)
+        {
+            HttpRequestMessage message = new(HttpMethod.Get, $"/puzzle/{day}/test-input");
 
             if (client == null)
             {
@@ -42,11 +68,10 @@ namespace I18NPuzzles.Gateways
         /// <summary>
         /// Send the user's answer to the specific question
         /// </summary>
-        /// <param name="year"></param>
         /// <param name="day"></param>
         /// <param name="answer"></param>
         /// <returns></returns>
-        public async Task<string> SubmitAnswer(int year, int day, string answer)
+        public async Task<string> SubmitAnswer(int day, string answer)
         {
             ThrottleCall();
 
@@ -70,31 +95,22 @@ namespace I18NPuzzles.Gateways
             }
 
             // TODO, get the proper route for answering solutions once a puzzle has come out
-            HttpResponseMessage result = await client!.PostAsync($"/{year}/day/{day}/answer", request);
+            HttpResponseMessage result = await client!.PostAsync($"/puzzle/{day}/answer", request);
 
             string response = await GetSuccessfulResponseContent(result);
 
-            // TODO, properly detect an expired cookie once a puzzle has come out
-            if (response.Contains("please identify yourself"))
+            try
             {
-                // We tried to submit an answer, but our token has expired
-                response = "Your cookie has expired, view the ReadMe for instructions on how to update it.";
+                // TODO, properly parse the response once a puzzle has come out to test against
+                // Find article component
+                HtmlDocument doc = new();
+                doc.LoadHtml(response);
+                HtmlNode article = doc.DocumentNode.SelectSingleNode("//article/p");
+                response = article.InnerHtml;
             }
-            else
+            catch (Exception)
             {
-                try
-                {
-                    // TODO, properly parse the response once a puzzle has come out to test against
-                    // Find article component
-                    HtmlDocument doc = new();
-                    doc.LoadHtml(response);
-                    HtmlNode article = doc.DocumentNode.SelectSingleNode("//article/p");
-                    response = article.InnerHtml;
-                }
-                catch (Exception)
-                {
-                    System.Console.WriteLine("Error parsing html response.");
-                }
+                System.Console.WriteLine("Error parsing html response.");
             }
 
             return response;
@@ -107,6 +123,10 @@ namespace I18NPuzzles.Gateways
         /// <returns></returns>
         private static async Task<string> GetSuccessfulResponseContent(HttpResponseMessage result)
         {
+            if (result.StatusCode == HttpStatusCode.Unauthorized) {
+                throw new Exception("Your Cookie has expired, please update it. See the ReadMe for more info.");
+            }
+
             result.EnsureSuccessStatusCode();
             return await result.Content.ReadAsStringAsync();
         }

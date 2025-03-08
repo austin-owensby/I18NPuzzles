@@ -11,11 +11,10 @@ namespace I18NPuzzles.Console.Controllers
         /// <summary>
         /// Runs a specific day's solution, and optionally posts the answer to I18N Puzzles and returns the result.
         /// </summary>
-        /// <param name="year"></param>
         /// <param name="day"></param>
         /// <param name="send">Submit the result to I18N Puzzles</param>
         /// <param name="example">Use an example file instead of the regular input, you must add the example at `Inputs/YYYY/DD_example.txt`</param>
-        public async Task GetSolution(int year = Globals.START_YEAR, int day = 1, bool send = false, bool example = false) {
+        public async Task GetSolution(int day = 1, bool send = false, bool example = false) {
             if (send && example)
             {
                 System.Console.WriteLine("You're attempting to submit your answer to I18N Puzzles while using an example input, this is likely a mistake.");
@@ -23,7 +22,7 @@ namespace I18NPuzzles.Console.Controllers
             
             SolutionService solutionService = SetupSolutionService();
 
-            string result = await solutionService.GetSolution(year, day, send, example);
+            string result = await solutionService.GetSolution(day, send, example);
             System.Console.WriteLine(result);
         }
 
@@ -33,25 +32,10 @@ namespace I18NPuzzles.Console.Controllers
         /// <remarks>
         /// The program is idempotent (You can run this multiple times as it will only add a file if it is needed.)
         /// </remarks>
-        /// <param name="year"></param>
         /// <param name="day"></param>
-        public async Task ImportInputFile(int year = Globals.START_YEAR, int day = 1) {
+        public async Task ImportInputFile(int day = 1) {
             PuzzleHelperService puzzleHelperService = new(gateway);
-            await puzzleHelperService.ImportInputFile(year, day);
-        }
-
-        /// <summary>
-        /// Creates missing daily solution service files.
-        /// </summary>
-        /// <remarks>
-        /// Useful when a new year has started to preemptively generate the service files for the calendar year before the advent starts.
-        /// The program is idempotent (You can run this multiple times as it will only add files if they are needed.)
-        /// 
-        /// You'll likely only need to use this once per year and only if either your source code has gotten out of sync from the `main` branch or I haven't kept it up to date.
-        /// </remarks> 
-        public async Task GenerateMissingSolutionServiceFiles() {
-            PuzzleHelperService puzzleHelperService = new(gateway);
-            await puzzleHelperService.GenerateMissingSolutionServiceFiles();
+            await puzzleHelperService.ImportInputFile(day);
         }
 
         private SolutionService SetupSolutionService() {

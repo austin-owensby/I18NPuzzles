@@ -1,12 +1,12 @@
 namespace I18NPuzzles.Services
 {
     // (ctrl/command + click) the link to open the input file
-    // file://./../../../Inputs/2025/19.txt
-    public class Solution2025_19Service : ISolutionDayService
+    // file://./../../../Inputs/19.txt
+    public class Solution19Service : ISolutionDayService
     {
         public string RunSolution(bool example)
         {
-            List<string> lines = Utility.GetInputLines(2025, 19, example);
+            List<string> lines = Utility.GetInputLines(19, example);
 
             int answer = 0;
 
