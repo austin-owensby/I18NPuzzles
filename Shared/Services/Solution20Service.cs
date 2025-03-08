@@ -1,7 +1,7 @@
 namespace I18NPuzzles.Services
 {
     // (ctrl/command + click) the link to open the input file
-    // file://./../../../Inputs/20.txt
+    // file://./../../Inputs/20.txt
     public class Solution20Service : ISolutionDayService
     {
         public string RunSolution(bool example)
