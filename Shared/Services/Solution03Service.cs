@@ -12,7 +12,27 @@ namespace I18NPuzzles.Services
 
             foreach (string line in lines)
             {
+                if (line.Length < 4 || line.Length > 12) {
+                    continue;
+                }
 
+                if (!line.Any(c => char.IsDigit(c))) {
+                    continue;
+                }
+
+                if (!line.Any(c => char.IsUpper(c))) {
+                    continue;
+                }
+
+                if (!line.Any(c => char.IsLower(c))) {
+                    continue;
+                }
+
+                if (!line.Any(c => !char.IsAscii(c))) {
+                    continue;
+                }
+
+                answer++;
             }
 
             return answer.ToString();
