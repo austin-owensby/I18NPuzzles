@@ -1,5 +1,3 @@
-using TimeZoneConverter;
-
 namespace I18NPuzzles.Services
 {
     // (ctrl/command + click) the link to open the input file
@@ -19,8 +17,8 @@ namespace I18NPuzzles.Services
                 List<string> departData = g[0].QuickRegex("Departure:\\s+([\\w\\/-]+)\\s+(.+)");
                 List<string> arriveData = g[1].QuickRegex("Arrival:\\s+([\\w\\/-]+)\\s+(.+)");
 
-                TimeZoneInfo departTimeZone = TZConvert.GetTimeZoneInfo(departData[0]);
-                TimeZoneInfo arriveTimeZone = TZConvert.GetTimeZoneInfo(arriveData[0]);
+                TimeZoneInfo departTimeZone = TimeZoneInfo.FindSystemTimeZoneById(departData[0]);
+                TimeZoneInfo arriveTimeZone = TimeZoneInfo.FindSystemTimeZoneById(arriveData[0]);
 
                 DateTime departDate = DateTime.Parse(departData[1]);
                 DateTime arriveDate = DateTime.Parse(arriveData[1]);
