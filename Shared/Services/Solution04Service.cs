@@ -11,7 +11,7 @@ namespace I18NPuzzles.Services
 
         public string RunSolution(bool example)
         {
-            List<string> lines = Utility.GetInputLines(4, example);
+            List<string> lines = FileUtility.GetInputLines(4, example);
 
             List<Trip> trips = lines.ChunkByExclusive(l => string.IsNullOrWhiteSpace(l)).Select(g => {
                 List<string> departData = g[0].QuickRegex("Departure:\\s+([\\w\\/-]+)\\s+(.+)");

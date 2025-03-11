@@ -2,7 +2,7 @@
 This repository is setup to assist with solving challenges from the [I18N Puzzles](https://i18n-puzzles.com/).
 
 It allows you to easily run solutions in C#, submit answers and see the response, pull down your inputs, and run test inputs via a Web API or Console app described below.
-This also includes some utilities to make some solutions easier. See the `Services/Utility.cs` file for more info.
+This also references some utilities to make some solutions easier. See my [Shared Utility repo](https://github.com/austin-owensby/SharedUtilities) file for more info.
 
 The `main` branch contains a ready to use template to start your own solutions.
 You may also reference the `aowensby-solutions` branch which contains my own solutions.

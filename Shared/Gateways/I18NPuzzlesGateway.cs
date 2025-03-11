@@ -1,6 +1,6 @@
 using System.Net;
 using HtmlAgilityPack;
-using I18NPuzzles.Services;
+using SharedUtilities;
 
 namespace I18NPuzzles.Gateways
 {

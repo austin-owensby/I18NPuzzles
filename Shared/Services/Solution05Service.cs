@@ -6,7 +6,7 @@ namespace I18NPuzzles.Services
     {
         public string RunSolution(bool example)
         {
-            List<string> lines = Utility.GetInputLines(5, example);
+            List<string> lines = FileUtility.GetInputLines(5, example);
 
             int answer = 0;
 

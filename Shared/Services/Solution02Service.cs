@@ -6,7 +6,7 @@ namespace I18NPuzzles.Services
     {
         public string RunSolution(bool example)
         {
-            List<string> lines = Utility.GetInputLines(2, example);
+            List<string> lines = FileUtility.GetInputLines(2, example);
             List<DateTimeOffset> dates = lines.Select(DateTimeOffset.Parse).ToList();
             DateTime detectedWaveTime = dates.GroupBy(l => l.UtcDateTime).OrderByDescending(g => g.Count()).First().Key;
 

@@ -11,4 +11,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="SharedUtilities">
+      <HintPath>..\..\SharedUtilities\bin\Debug\net8.0\SharedUtilities.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
