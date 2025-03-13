@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text;
 
 namespace I18NPuzzles.Services
@@ -11,43 +10,28 @@ namespace I18NPuzzles.Services
         {
             List<string> lines = FileUtility.GetInputLines(6, example);
 
-            // TODO could be a utility function
-            List<string> words = lines.TakeWhile(l => !string.IsNullOrWhiteSpace(l)).ToList();
-            List<string> puzzle = lines.SkipWhile(l => !string.IsNullOrWhiteSpace(l)).Skip(1).Select(l => l.Trim()).ToList();
+            List<List<string>> parts = lines.ChunkByExclusive(string.IsNullOrWhiteSpace);
+            List<string> words = parts[0];
+            List<string> puzzle = parts[1].Select(w => w.Trim()).ToList();
 
-            // TODO could be a utility function
-            List<List<string>> puzzleArray = [];
-            foreach (string puzzleLine in puzzle) {
-                List<string> puzzleItem = [];
-                TextElementEnumerator iterator = StringInfo.GetTextElementEnumerator(puzzleLine);
-                while (iterator.MoveNext()) {
-                    puzzleItem.Add(iterator.GetTextElement());
-                }
-
-                puzzleArray.Add(puzzleItem);
-            }
+            List<List<string>> puzzleArray = puzzle.Select(l => l.ToTextElementList()).ToList();
 
             int answer = 0;
 
-            for (int i = 0; i < lines.Count; i++){
-                string line = lines[i];
+            for (int i = 0; i < words.Count; i++){
+                string word = words[i];
 
                 if ((i + 1) % 3 == 0) {
-                    byte[] bytes = Encoding.Latin1.GetBytes(line);
-                    line = Encoding.UTF8.GetString(bytes);
+                    byte[] bytes = Encoding.Latin1.GetBytes(word);
+                    word = Encoding.UTF8.GetString(bytes);
                 }
 
                 if ((i + 1) % 5 == 0) {
-                    byte[] bytes = Encoding.Latin1.GetBytes(line);
-                    line = Encoding.UTF8.GetString(bytes);
+                    byte[] bytes = Encoding.Latin1.GetBytes(word);
+                    word = Encoding.UTF8.GetString(bytes);
                 }
 
-                List<string> stringArray = [];
-
-                TextElementEnumerator iterator = StringInfo.GetTextElementEnumerator(line);
-                while (iterator.MoveNext()) {
-                    stringArray.Add(iterator.GetTextElement());
-                }
+                List<string> stringArray = word.ToTextElementList();
 
                 foreach (List<string> puzzleLine in puzzleArray) {
                     if (puzzleLine.Count == stringArray.Count) {

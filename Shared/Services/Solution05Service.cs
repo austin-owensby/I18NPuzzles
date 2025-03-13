@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace I18NPuzzles.Services
 {
     // (ctrl/command + click) the link to open the input file
@@ -9,38 +7,20 @@ namespace I18NPuzzles.Services
         public string RunSolution(bool example)
         {
             List<string> lines = FileUtility.GetInputLines(5, example);
+            List<List<string>> grid = lines.Select(l => l.ToTextElementList()).ToList();
 
             int answer = 0;
 
             int col = 0;
 
-            // Find the true line length considering emojis
-            int lineLength = 0;
-            TextElementEnumerator iterator = StringInfo.GetTextElementEnumerator(lines[0]);
-            while (iterator.MoveNext()) {
-                lineLength++;
-            }
-
-            foreach (string line in lines)
+            foreach (List<string> line in grid)
             {
-                // Iterate over text elements instead of just characters to account for emojis
-                iterator = StringInfo.GetTextElementEnumerator(line);
-
-                int index = 0;
-
-                while (iterator.MoveNext()) {
-                    if (index == col && iterator.GetTextElement() == "💩") {
-                        answer++;
-                    }
-                    index++;
-
-                    if (index > col) {
-                        break;
-                    }
+                if (line[col] == "💩") {
+                    answer++;
                 }
                 
                 // Wrap around left to right
-                col = (col + 2) % lineLength;
+                col = (col + 2) % line.Count;
             }
 
             return answer.ToString();
