@@ -10,8 +10,7 @@ namespace I18NPuzzles.Services
 
             // Parse the data
             var data = lines.Select(x => x.Split(": ")).Select(x => new{
-                DateString = x[0],
-                Date = x[0].Split("-").ToInts(),
+                Date = x[0],
                 Names = x[1].Split(", ")
             });
 
@@ -31,20 +30,20 @@ namespace I18NPuzzles.Services
                         break;
                     }
 
-                    if (possibleFormats.Contains("DMY") && !DateOnly.TryParseExact(entry.DateString, "dd-MM-yy", out DateOnly dateParsed))
+                    if (possibleFormats.Contains("DMY") && !DateOnly.TryParseExact(entry.Date, "dd-MM-yy", out DateOnly dateParsed))
                     {
                         possibleFormats.Remove("DMY");
                     }
 
-                    if (possibleFormats.Contains("MDY") && !DateOnly.TryParseExact(entry.DateString, "MM-dd-yy", out dateParsed)) {
+                    if (possibleFormats.Contains("MDY") && !DateOnly.TryParseExact(entry.Date, "MM-dd-yy", out dateParsed)) {
                         possibleFormats.Remove("MDY");
                     }
 
-                    if (possibleFormats.Contains("YMD") && !DateOnly.TryParseExact(entry.DateString, "yy-MM-dd", out dateParsed)) {
+                    if (possibleFormats.Contains("YMD") && !DateOnly.TryParseExact(entry.Date, "yy-MM-dd", out dateParsed)) {
                         possibleFormats.Remove("YMD");
                     }
 
-                    if (possibleFormats.Contains("YDM") && !DateOnly.TryParseExact(entry.DateString, "yy-dd-MM", out dateParsed)) {
+                    if (possibleFormats.Contains("YDM") && !DateOnly.TryParseExact(entry.Date, "yy-dd-MM", out dateParsed)) {
                         possibleFormats.Remove("YDM");
                     }
                 }
@@ -52,10 +51,10 @@ namespace I18NPuzzles.Services
                 // Now that we know the format of the date, see if any can be parsed to September 11th 2001
                 foreach (var entry in entries) {
                     DateOnly date =  possibleFormats.First() switch {
-                        "DMY" => DateOnly.ParseExact(entry.DateString, "dd-MM-yy"),
-                        "MDY" => DateOnly.ParseExact(entry.DateString, "MM-dd-yy"),
-                        "YMD" => DateOnly.ParseExact(entry.DateString, "yy-MM-dd"),
-                        "YDM" => DateOnly.ParseExact(entry.DateString, "yy-dd-MM"),
+                        "DMY" => DateOnly.ParseExact(entry.Date, "dd-MM-yy"),
+                        "MDY" => DateOnly.ParseExact(entry.Date, "MM-dd-yy"),
+                        "YMD" => DateOnly.ParseExact(entry.Date, "yy-MM-dd"),
+                        "YDM" => DateOnly.ParseExact(entry.Date, "yy-dd-MM"),
                         _ => throw new Exception($"Unexpected format: {possibleFormats.First()}")
                     };
 
