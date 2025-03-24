@@ -3,6 +3,10 @@ using I18NPuzzles.Gateways;
 using I18NPuzzles.PuzzleHelper;
 using I18NPuzzles.Services;
 using I18NPuzzles.Controllers;
+using System.Text;
+
+// Allows us to use the CP437 encoding
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

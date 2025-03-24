@@ -1,5 +1,9 @@
-﻿using I18NPuzzles;
+﻿using System.Text;
+using I18NPuzzles;
 using I18NPuzzles.Console.Controllers;
+
+// Allows us to use the CP437 encoding
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 // Set any of these values to default them and bypass the console interface
 int? mode = null;
